@@ -10,12 +10,12 @@ Just learn JavaScript basic and advanced concepts besides its modern concepts in
 
 - [x] Data types
 - [x] Regular Expressions
-- [] Objects and functions
-- [] Collections
-- [] Classes, Proxy and Reflection
-- [] Promises
-- [] Generators
-- [] Async/Await
+- [ ] Objects and functions
+- [ ] Collections
+- [ ] Classes, Proxy and Reflection
+- [ ] Promises
+- [ ] Generators
+- [ ] Async/Await
  
 
 
