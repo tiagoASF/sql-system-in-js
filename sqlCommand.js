@@ -63,7 +63,7 @@ let database = {
         if (query.startsWith("create table")) {
             this.createTable(query);
         } else {
-            console.log("Invalid SQL command");
+            console.log("Invalid SQL query");
         }
     }
 };
@@ -72,7 +72,6 @@ const sqlQuery = "create table author (id number, name string, age number, city 
 
 
 database.execute(sqlQuery);
-
 console.log(JSON.stringify(database, null, "\t"));
 
 
