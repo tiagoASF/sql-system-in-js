@@ -6,7 +6,7 @@ In this project, the database will be a simple javascript object and the data wi
 
 ## Objective
 
-Just learn JavaScript basic and advanced concepts besides its modern concepts included in ESC6, like:
+Just learn JavaScript basic and advanced concepts including some important features of ES6, like:
 
 - [x] Data types
 - [x] Regular Expressions
