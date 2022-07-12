@@ -1,6 +1,6 @@
 # A very simple SQL system in JavaScript
 
-This is a simple project that emulate a SQL plataform, where the user create a DDL or DML command query, like "create database", the system will identify it and execute the command, creating, deleting or changing a specific database.
+This is a simple project that emulate a SQL plataform, where the user create a DDL or DML command query, like "create database". The system will identify it and execute the command, creating, deleting or changing tables in a specific database.
 
 In this project, the database will be a simple javascript object and the data will be persisted in arrays. 
 
