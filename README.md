@@ -10,7 +10,8 @@ Just learn JavaScript basic and advanced concepts including some important featu
 
 - [x] Data types
 - [x] Regular Expressions
-- [ ] Objects and functions
+- [x] Objects and functions
+- [x] Error Handling
 - [ ] Collections
 - [ ] Classes, Proxy and Reflection
 - [ ] Promises
