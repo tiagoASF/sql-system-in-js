@@ -49,9 +49,9 @@ let database = {
             this.createTable(query);
             console.log(JSON.stringify(database, null, "   "));
         } else {
-            const databaseError = new DatabaseError(query, "Syntax Error")
-            throw databaseError.message;
+            throw new DatabaseError(query, "Syntax Error");
         }
+        
     }
 };
 
@@ -61,13 +61,11 @@ const DatabaseError = function(statement, message) {
 }
 
 try {
-    const sqlQuery = "create table author (id number, name string, age number, city string, state string, country string)";
-    //const sqlQuery = "select id, name from author";
+    //const sqlQuery = "create table author (id number, name string, age number, city string, state string, country string)";
+    const sqlQuery = "select id, name from author";
     database.execute(sqlQuery);
-    
-
 } catch(e) {
-    console.log(e);
+    console.log(e.message);
 }
 
 
