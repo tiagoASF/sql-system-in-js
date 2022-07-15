@@ -21,7 +21,6 @@ Não esqueça de utilizar o operador new para instanciar a função construtora 
 */
 
 
-
 let database = {
     tables : {},
     
@@ -48,17 +47,28 @@ let database = {
     execute(query) {
         if (query.startsWith("create table")) {
             this.createTable(query);
+            console.log(JSON.stringify(database, null, "   "));
         } else {
-            console.log("Invalid SQL query");
+            const databaseError = new DatabaseError(query, "Syntax Error")
+            throw databaseError.message;
         }
     }
 };
 
-const sqlQuery = "create table author (id number, name string, age number, city string, state string, country string)";
+const DatabaseError = function(statement, message) {
+    this.statement = statement;
+    this.message = `${message}: ${statement}`;
+}
 
+try {
+    const sqlQuery = "create table author (id number, name string, age number, city string, state string, country string)";
+    //const sqlQuery = "select id, name from author";
+    database.execute(sqlQuery);
+    
 
-database.execute(sqlQuery);
-console.log(JSON.stringify(database, null, "\t"));
+} catch(e) {
+    console.log(e);
+}
 
 
 
