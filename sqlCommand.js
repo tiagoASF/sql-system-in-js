@@ -1,6 +1,7 @@
 let database = {
     tables : {},
     
+    //cria uma tabela no objeto database
     createTable(query) {
         const regExp = /^create table\s(\w+)\s\(([\w\s,]+)\)/;
         const result = query.match(regExp);
@@ -21,22 +22,27 @@ let database = {
         }
     },
 
+    //insere valores na tabela informada
     insert(query) {
         const regExp = /^insert into\s(\w+)\s\(([\w\s,]+)\)\svalues\s\(([\w+\s,]+)\)/;
         const result = query.match(regExp);
 
-        const tableName = result[1];
-        const columnsNames = result[2].split(", ");
-        const columnsValues = result[3].split(", ");
-        const row = {};
+        //destructuring
+        let [,tableName, columns, values] = result;
 
-        for (let i = 0; i < columnsNames.length; i++) {
-            row[columnsNames[i]] = columnsValues[i];
+        columns = columns.split(", ");
+        values = values.split(", ");
+        
+        let row = {};
+
+        for (let i = 0; i < columns.length; i++) {
+            row[columns[i]] = values[i];
         };
 
         this.tables[tableName].data.push(row);
     },
 
+    //executa a query conforme o tipo de comando
     execute(query) {
         if (query.startsWith("create table")) {
             this.createTable(query);
@@ -51,11 +57,13 @@ let database = {
     }
 };
 
+//tratamento de erro
 const DatabaseError = function(statement, message) {
     this.statement = statement;
     this.message = `${message}: ${statement}`;
 }
 
+//execucao dos comandos
 try {
     const createTableQuery = "create table author (id number, name string, age number, city string, state string, country string)";
 
