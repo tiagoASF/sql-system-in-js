@@ -12,7 +12,7 @@ Just learn JavaScript basic and advanced concepts including some important featu
 - [x] Regular Expressions
 - [x] Objects and functions
 - [x] Error Handling
-- [ ] Collections
+- [x] Collections
 - [ ] Classes, Proxy and Reflection
 - [ ] Promises
 - [ ] Generators
