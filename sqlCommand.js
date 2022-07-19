@@ -42,7 +42,25 @@ let database = {
         this.tables[tableName].data.push(row);
     },
 
-    
+    select(query) {
+        //"select name, age from author where id = 1"
+        //"select name, age from author"
+        const regExp = /^select ([\w\s,]+) from (\w+)/;
+        const queryParameters = query.match(regExp);
+
+        let [, columns, tableName] = queryParameters;
+        columns = columns.split(', ');
+
+        let rows = this.tables[tableName].data;
+        rows = rows.map(function(row) {
+            let selectedRow = {};
+            columns.forEach(function(column) {
+                selectedRow[column] = row[column];
+            })
+            console.log(selectedRow);
+        });
+
+    },
 
     //executa a query conforme o tipo de comando
     execute(query) {
@@ -76,6 +94,7 @@ try {
     database.execute("insert into author (id, name, age) values (2, Linus Torvalds, 47)");
     database.execute("insert into author (id, name, age) values (3, Martin Fowler, 54)");
     database.execute("select name, age from author");
+    //database.execute("select name, age from author where id = 1");
 
 } catch(e) {
     console.log(e.message);
