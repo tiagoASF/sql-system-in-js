@@ -42,6 +42,8 @@ let database = {
         this.tables[tableName].data.push(row);
     },
 
+    
+
     //executa a query conforme o tipo de comando
     execute(query) {
         if (query.startsWith("create table")) {
@@ -49,7 +51,9 @@ let database = {
             //console.log(JSON.stringify(database, null, "   "));
         } else if (query.startsWith("insert into")) {
             this.insert(query);
-            console.log(JSON.stringify(database, null, "   "));
+            //console.log(JSON.stringify(database, null, "   "));
+        } else if (query.startsWith("select")){
+            this.select(query);
         } else {
             throw new DatabaseError(query, "Syntax Error");
         }
@@ -71,9 +75,55 @@ try {
     database.execute("insert into author (id, name, age) values (1, Douglas Crockford, 62)");
     database.execute("insert into author (id, name, age) values (2, Linus Torvalds, 47)");
     database.execute("insert into author (id, name, age) values (3, Martin Fowler, 54)");
+    database.execute("select name, age from author");
 
 } catch(e) {
     console.log(e.message);
 }
 
 
+/*
+1 - Objetivo
+    Implemente o método "select". Para isso, é necessário extrair as informações a partir do comando, filtrando os dados pela cláusula "where" e montando os objetos de acordo com as colunas selecionadas.
+
+2 - Instruções
+    Dada o comando: 
+    select name, age from author where id = 1
+
+    2.1 - Crie um método chamado "select".
+    2.2 - Na função "execute", invoque o método "select".
+    2.3 - No método "select", retorne todos os registros considerando apenas as colunas selecionadas.
+    2.4 - Extraia a cláusula where do comando.
+    2.5 - Crie as variáveis columnWhere e valueWhere.
+    2.6 - Filtre os registros conforme a cláusula where.
+
+3 - Cenário
+
+    database.execute("create table author (id number, name string, age number, city string, state string, country string)");
+    database.execute("insert into author (id, name, age) values (1, Douglas Crockford, 62)");
+    database.execute("insert into author (id, name, age) values (2, Linus Torvalds, 47)");
+    database.execute("insert into author (id, name, age) values (3, Martin Fowler, 54)");
+    database.execute("select name, age from author");
+    database.execute("select name, age from author where id = 1");
+
+4 - Dicas
+    Você pode utilizar a operação Array.prototype.map para converter um array em outro e ainda a operação Array.prototype.filter para filtrar os dados. Você pode querer ignorar um grupo de captura, para isso utiliza a notação ?: dentro do grupo, por exemplo (?: where (.+))?
+
+5 - Resultado
+
+    [{
+        "name": "Douglas Crockford",
+        "age": "62"
+    }, {
+            "name": "Linus Torvalds",
+            "age": "47"
+    }, {
+            "name": "Martin Fowler",
+            "age": "54"
+    }]
+
+    [{
+    "name": "Douglas Crockford",
+    "age": "62"
+    }, ]
+*/
