@@ -110,20 +110,26 @@ let database = {
         return rows;
 
     },
-    //"apaga uma linha do banco conforme clausula where
+    //"apaga uma linha do banco conforme clausula where.
+    //Se não houiver clausula WHERE apaga toda a tabela
     delete(query) {
-        const regExp = /^delete from (\w+) where (.+)/;
+        const regExp = /^delete from (\w+)(:? where (.+))?/;
         const queryParameters = query.match(regExp);
-        [, tableName, column] = queryParameters;
-        column = column.split(" = ");
-        [columnWhere, columnValue] = column;        
+        [, tableName, whereClause] = queryParameters;
         
-        let rowToDelete = this.tables[tableName].data.filter(function(row) {
-            return row[columnWhere] === columnValue;
-        });
+        if (whereClause) {
+            whereClause = whereClause.split(" = ");
+            [columnWhere, columnValue] = whereClause;        
+            let rowToDelete = this.tables[tableName].data.filter(function(row) {
+                return row[columnWhere] === columnValue;
+            });
+    
+            const index = this.tables[tableName].data.indexOf(rowToDelete);
+            this.tables[tableName].data.splice(index, 1);
+        } else {
+            this.tables[tableName].data = [];
+        }
 
-        const index = this.tables[tableName].data.indexOf(rowToDelete);
-        this.tables[tableName].data.splice(index, 1);
     },
     //executa a query conforme o tipo de comando
     execute(query) {
@@ -159,8 +165,8 @@ try {
     database.execute("insert into author (id, name, age) values (1, Douglas Crockford, 62)");
     database.execute("insert into author (id, name, age) values (2, Linus Torvalds, 47)");
     database.execute("insert into author (id, name, age) values (3, Martin Fowler, 54)");
-    database.execute("delete from author where id = 2");
-    //database.execute("select name, age from author where id = 2");
+    database.execute("select name, age from author where id = 3");
+    database.execute("delete from author where id = 3");
     database.execute("select name, age from author");
 
 
