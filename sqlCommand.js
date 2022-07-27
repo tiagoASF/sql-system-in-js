@@ -35,7 +35,7 @@ const DatabaseError = function(statement, message) {
 let database = {
     tables : {},
 
-    //a instancia dentro do objeto é interessante para criar apenas uma vez, caso fosse no execute, toda execução seria redundante.
+    //a instancia dentro do objeto é interessante para que ela seja criada apenas uma vez, caso fosse no execute, sempre seria criado um novo objeto
     parser: new Parser(),
     
     //cria uma tabela no objeto database
@@ -60,8 +60,6 @@ let database = {
 
     //insere valores na tabela informada
     insert(parsedStatement) {
-        
-
         //destructuring
         let [,tableName, columns, values] = parsedStatement;
 
@@ -80,11 +78,6 @@ let database = {
     //retorna um array com os objetos selecionados com base nas colunas do banco
     //funciona com ou sem a clausula where
     select(parsedStatement) {
-        //"select name, age from author where id = 1"
-        //"select name, age from author"
-        
-
-        //console.log(queryParameters);
         let [, columns, tableName, whereClause] = parsedStatement;
         let rows = this.tables[tableName].data;
         columns = columns.split(', ');
@@ -153,38 +146,3 @@ try {
 } catch(e) {
     console.log(e.message);
 }
-
-/*
-1 - Objetivo
-    Implemente a função construtora "Parser", que será responsável por receber o comando, identificá-lo e extraí-lo após a execução da expressão regular. Além disso, o nome do comando também deve ser retornado para que ele seja selecionado dinamicamente no método "execute".
-
-2 - Instruções
-    2.1 - Crie uma função construtora chamada "Parser".
-    2.2 - Dentro de "Parser", crie um Map chamando "commands" onde a chave é o nome do comando e o valor é a expressão regular.
-    2.3 - Crie um método chamado "parse" que recebe "statement".
-    2.4 - Dentro do método "parse" itere em "commands" fazendo um match em cada uma das expressões regulares com o "statement" até identificar a expressão responsável pelo comando.
-    2.5 - Após encontrar a expressão regular, retorne um objeto contendo o nome do comando na propriedade "command" e o resultado da execução do método "match" na propriedade "parsedStatement".
-    2.6 - No objeto "database", crie uma propriedade chamada "parser" e instancie a função construtora "Parser".
-    2.7 - No método "execute", execute o método "parse" e faça o chaveamento do comando dinamicamente.
-    2.8 - Refatore os métodos "createTable", "insert", "select" e "delete" para receberem o "parsedStatement" e não mais o "statement".
-
-3 - Cenário
-    database.execute("create table author (id number, name string, age number, city string, state string, country string)");
-    database.execute("insert into author (id, name, age) values (1, Douglas Crockford, 62)");
-    database.execute("insert into author (id, name, age) values (2, Linus Torvalds, 47)");
-    database.execute("insert into author (id, name, age) values (3, Martin Fowler, 54)");
-    database.execute("delete from author where id = 2");
-    database.execute("select name, age from author");
-
-4 - Dicas
-    Dentro do método "parse", você pode iterar sobre o Map de "commands" com for/of e utilizar destructuring para extrair o "command" e o "parsedStatement".
-
-5 - Resultado
-    [{
-        "name": "Douglas Crockford",
-        "age": "62"
-    }, {
-        "name": "Martin Fowler",
-        "age": "54"
-    }]
-*/
