@@ -1,12 +1,49 @@
+//função parser da query informada pelo usuário
+const Parser = function(){
+    const regExpCreateTable = /^create table\s(\w+)\s\(([\w\s,]+)\)/;
+    const regExpInsertInTable = /^insert into\s(\w+)\s\(([\w\s,]+)\)\svalues\s\(([\w+\s,]+)\)/;
+    const regExpSelect = /^select ([\w\s,]+) from (\w+)(?: where (.+))?/;
+    const regExpDelete = /^delete from (\w+)(:? where (.+))?/;
+
+    const commands = new Map();
+    commands.set("createTable", regExpCreateTable);
+    commands.set("insert", regExpInsertInTable);
+    commands.set("select", regExpSelect);
+    commands.set("delete", regExpDelete);
+
+    this.parse = function(statement) {
+        for (let command of commands) {
+            const[commandName, regExp] = command;
+            const parsedStatement = statement.match(regExp);
+            if (parsedStatement) {
+                return {
+                    command,
+                    parsedStatement
+                }
+            }
+        } 
+    }
+};
+
+
+//tratamento de erro
+const DatabaseError = function(statement, message) {
+    this.statement = statement;
+    this.message = `${message}: ${statement}`;
+}
+
+
 let database = {
     tables : {},
+
+    //a instancia dentro do objeto é interessante para criar apenas uma vez, caso fosse no execute, toda execução seria redundante.
+    parser: new Parser(),
     
     //cria uma tabela no objeto database
-    createTable(query) {
-        const regExp = /^create table\s(\w+)\s\(([\w\s,]+)\)/;
-        const result = query.match(regExp);
-        const tableName = result[1];
-        let columns = result[2].split(', ');
+    createTable(parsedStatement) {
+        
+        const tableName = parsedStatement[1];
+        let columns = parsedStatement[2].split(', ');
 
         this.tables[tableName] = {
             columns : {},
@@ -23,12 +60,11 @@ let database = {
     },
 
     //insere valores na tabela informada
-    insert(query) {
-        const regExp = /^insert into\s(\w+)\s\(([\w\s,]+)\)\svalues\s\(([\w+\s,]+)\)/;
-        const result = query.match(regExp);
+    insert(parsedStatement) {
+        
 
         //destructuring
-        let [,tableName, columns, values] = result;
+        let [,tableName, columns, values] = parsedStatement;
 
         columns = columns.split(", ");
         values = values.split(", ");
@@ -44,14 +80,13 @@ let database = {
 
     //retorna um array com os objetos selecionados com base nas colunas do banco
     //funciona com ou sem a clausula where
-    select(query) {
+    select(parsedStatement) {
         //"select name, age from author where id = 1"
         //"select name, age from author"
-        const regExp = /^select ([\w\s,]+) from (\w+)(?: where (.+))?/;
-        const queryParameters = query.match(regExp);
+        
 
         //console.log(queryParameters);
-        let [, columns, tableName, whereClause] = queryParameters;
+        let [, columns, tableName, whereClause] = parsedStatement;
         let rows = this.tables[tableName].data;
         columns = columns.split(', ');
 
@@ -75,10 +110,9 @@ let database = {
     },
     //"apaga uma linha do banco conforme clausula where.
     //Se não houiver clausula WHERE apaga toda a tabela
-    delete(query) {
-        const regExp = /^delete from (\w+)(:? where (.+))?/;
-        const queryParameters = query.match(regExp);
-        [, tableName, whereClause] = queryParameters;
+    delete(parsedStatement) {
+        
+        [, tableName, whereClause] = parsedStatement;
         
         if (whereClause) {
             whereClause = whereClause.split(" = ");
@@ -96,29 +130,15 @@ let database = {
     },
     //executa a query conforme o tipo de comando
     execute(query) {
-        if (query.startsWith("create table")) {
-            this.createTable(query);
-            //console.log(JSON.stringify(database, null, "   "));
-        } else if (query.startsWith("insert into")) {
-            this.insert(query);
-            //console.log(JSON.stringify(database, null, "   "));
-        } else if (query.startsWith("select")){
-            this.select(query);
-            console.log(JSON.stringify((this.select(query)), null, "   "));
-        } else if (query.startsWith("delete")){
-            this.delete(query);
-        } else {
-            throw new DatabaseError(query, "Syntax Error");
+        const result = this.parser.parse(query);
+        if (result) {
+            return this[result.command](parsedStatement);
         }
-        
+
+        throw new DatabaseError(query, "Syntax Error");
     }
 };
 
-//tratamento de erro
-const DatabaseError = function(statement, message) {
-    this.statement = statement;
-    this.message = `${message}: ${statement}`;
-}
 
 //execucao dos comandos
 try {
